@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Coaching Landing Page
+
+A modern, minimalistic coaching landing page built with Next.js and Tailwind CSS.
+
+## Features
+
+- **Responsive Design**: Fully responsive layout that works on all devices
+- **Modern UI**: Clean, minimalistic design with smooth animations
+- **SEO Optimized**: Proper meta tags and semantic HTML structure
+- **Fast Performance**: Built with Next.js for optimal performance
+- **Accessibility**: WCAG compliant with proper ARIA labels
+
+## Sections
+
+1. **Navigation**: Fixed header with smooth scrolling navigation
+2. **Hero**: Compelling headline with clear call-to-action
+3. **About**: Coaching philosophy and approach
+4. **Services**: Three coaching packages with pricing
+5. **Testimonials**: Client success stories and reviews
+6. **Contact**: Contact form and information
+7. **Footer**: Links and social media
+
+## Technologies Used
+
+- **Next.js 15**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Hooks**: Modern React patterns
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The landing page is fully customizable:
 
-## Learn More
+- **Colors**: Update the color scheme in the Tailwind classes
+- **Content**: Modify text content in the component files
+- **Images**: Replace placeholder images with actual photos
+- **Contact Form**: Connect to your preferred form handling service
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project can be deployed to any platform that supports Next.js:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Vercel** (recommended)
+- **Netlify**
+- **AWS Amplify**
+- **DigitalOcean App Platform**
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the [MIT License](LICENSE).
