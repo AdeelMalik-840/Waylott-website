@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+/**
+ * Next.js Configuration
+ * 
+ * Changes:
+ * - Removed deprecated `swcMinify` option (always enabled by default in Next.js 13+)
+ */
 const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -10,7 +16,6 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: true,
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },

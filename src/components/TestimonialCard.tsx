@@ -38,11 +38,16 @@ export default function TestimonialCard({
       {/* Image on the left */}
       <div className="relative w-full md:w-48 h-48 md:h-auto flex-shrink-0">
         <div className="relative w-full h-full">
-          {/* Placeholder for image - replace with actual Image component when available */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-emerald-700 opacity-90 rounded-t-2xl md:rounded-t-none md:rounded-l-2xl" />
-          </div>
+          <Image
+            src={image}
+            alt={`${name} portrait`}
+            fill
+            className="object-cover rounded-t-2xl md:rounded-t-none md:rounded-l-2xl"
+            loading="lazy"
+            quality={85}
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/90 to-emerald-700/90 rounded-t-2xl md:rounded-t-none md:rounded-l-2xl" />
           {/* Name and Title Overlay on image */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/60 to-transparent rounded-b-2xl md:rounded-b-none md:rounded-bl-2xl">
             <div className="text-white font-bold text-lg mb-1">{name}</div>

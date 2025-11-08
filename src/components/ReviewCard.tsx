@@ -13,9 +13,9 @@ export type Review = {
 };
 
 type ReviewCardProps = Review & {
-  isActive?: boolean;
-  isPreviousActive?: boolean; // Previous center moving left
-  isIncoming?: boolean; // Right slide coming in
+  _isActive?: boolean; // Reserved for future use
+  _isPreviousActive?: boolean; // Reserved for future use
+  _isIncoming?: boolean; // Reserved for future use
   onReadMore?: (review: Review) => void;
 };
 
@@ -73,9 +73,6 @@ export default function ReviewCard({
   review,
   imageUrl,
   linkHref = "#",
-  isActive = false,
-  isPreviousActive = false,
-  isIncoming = false,
   onReadMore,
 }: ReviewCardProps) {
   const fullStars = Math.floor(rating);

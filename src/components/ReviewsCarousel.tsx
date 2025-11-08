@@ -24,7 +24,6 @@ export default function ReviewsCarousel({
   const [vIndex, setVIndex] = useState(1); // Index in virtual list [1..N] (never 0 or N+1)
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [previousActive, setPreviousActive] = useState<number | null>(null);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [mounted, setMounted] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -181,9 +180,6 @@ export default function ReviewsCarousel({
     setIsTransitioning(true);
     const nextVIndex = vIndex + 1;
     
-    // Track previous active for scale-out animation
-    setPreviousActive(active);
-    
     // Check if we need to wrap (when we exceed the extended track)
     // Extended track has length: 1 (clone last) + 4*N (four cycles) + 1 (clone first) = 4N + 2
     const maxVirtualIndex = 4 * N + 1;
@@ -217,7 +213,6 @@ export default function ReviewsCarousel({
             if (trackRef.current) {
               trackRef.current.style.transition = "transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94)";
             }
-            setPreviousActive(null);
             setIsTransitioning(false);
           });
         });
@@ -229,13 +224,12 @@ export default function ReviewsCarousel({
       setActive(newRealIndex);
       updateTransform(nextVIndex);
       
-      // Clear previous active after animation completes
+      // Clear transition state after animation completes
       setTimeout(() => {
-        setPreviousActive(null);
         setIsTransitioning(false);
       }, 800);
     }
-  }, [vIndex, active, isTransitioning, N, updateTransform, getRealIndex]);
+  }, [vIndex, isTransitioning, N, updateTransform, getRealIndex]);
 
   // Move to previous slide (left to right - reverse direction) - infinite scrolling
   const prev = useCallback(() => {
@@ -244,9 +238,6 @@ export default function ReviewsCarousel({
     
     setIsTransitioning(true);
     const prevVIndex = vIndex - 1;
-    
-    // Track previous active for scale-out animation
-    setPreviousActive(active);
     
     if (prevVIndex < 1) {
       // Wrapping backward: jump to equivalent position in a later cycle
@@ -263,7 +254,6 @@ export default function ReviewsCarousel({
       
       setVIndex(targetVIndex);
       setActive(newActive);
-      setPreviousActive(active);
       updateTransform(targetVIndex);
       
       // Re-enable transition after jump
@@ -272,7 +262,6 @@ export default function ReviewsCarousel({
           if (trackRef.current) {
             trackRef.current.style.transition = "transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94)";
           }
-          setPreviousActive(null);
           setIsTransitioning(false);
         });
       });
@@ -283,13 +272,12 @@ export default function ReviewsCarousel({
       setActive(newRealIndex);
       updateTransform(prevVIndex);
       
-      // Clear previous active after animation completes
+      // Clear transition state after animation completes
       setTimeout(() => {
-        setPreviousActive(null);
         setIsTransitioning(false);
       }, 800);
     }
-  }, [vIndex, active, isTransitioning, N, updateTransform, getRealIndex]);
+  }, [vIndex, isTransitioning, N, updateTransform, getRealIndex]);
 
   // Auto-scroll
   useEffect(() => {
@@ -386,15 +374,20 @@ export default function ReviewsCarousel({
 
   // Cleanup
   useEffect(() => {
+    // Copy ref values to local variables for cleanup
+    const autoScrollTimer = autoScrollTimerRef.current;
+    const transitionEndTimeout = transitionEndTimeoutRef.current;
+    const resizeTimeout = resizeTimeoutRef.current;
+    
     return () => {
-      if (autoScrollTimerRef.current) {
-        clearInterval(autoScrollTimerRef.current);
+      if (autoScrollTimer) {
+        clearInterval(autoScrollTimer);
       }
-      if (transitionEndTimeoutRef.current) {
-        clearTimeout(transitionEndTimeoutRef.current);
+      if (transitionEndTimeout) {
+        clearTimeout(transitionEndTimeout);
       }
-      if (resizeTimeoutRef.current) {
-        clearTimeout(resizeTimeoutRef.current);
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
       }
     };
   }, []);
@@ -593,9 +586,9 @@ export default function ReviewsCarousel({
                 >
                   <ReviewCard
                     {...review}
-                    isActive={isActive}
-                    isPreviousActive={false}
-                    isIncoming={false}
+                    _isActive={isActive}
+                    _isPreviousActive={false}
+                    _isIncoming={false}
                     onReadMore={(review) => {
                       setSelectedReview(review);
                       setIsPaused(true);

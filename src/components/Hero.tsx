@@ -12,8 +12,6 @@ export default function Hero() {
   const [videoError, setVideoError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(true);
-  const [showBlob, setShowBlob] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -36,10 +34,6 @@ export default function Hero() {
   }, []);
 
 
-  // Fade-in animation on mount
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   // respectful autoplay - disabled to show thumbnail first
   // useEffect(() => {

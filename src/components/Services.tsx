@@ -116,7 +116,7 @@ export default function Services() {
               step="Step 2"
               Icon={ShieldCheck}
               title="The $30,000 Guarantee"
-              quote={'"If we don\'t find you $30,000 in Hidden Revenue we refund you immediately"'}
+              quote={"If we don't find you $30,000 in Hidden Revenue we refund you immediately"}
             />
           </ParallaxCard>
 
