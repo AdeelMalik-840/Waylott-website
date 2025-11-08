@@ -11,6 +11,13 @@ import { Telescope, ShieldCheck, Sprout } from 'lucide-react';
 import Image from 'next/image';
 import greenBlob from '@/images/green-blob.svg';
 
+/* ---------- Easing + variants (moved to top for hoisting) ---------- */
+const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } },
+};
+
 export default function Services() {
   return (
     <section id="services" className="relative overflow-hidden py-16">
@@ -43,7 +50,7 @@ export default function Services() {
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05, ease: easeOut as any }}
+          transition={{ duration: 0.5, delay: 0.05, ease: easeOut }}
           className="mx-auto mt-4 max-w-3xl text-center text-lg leading-7 text-gray-600 relative z-0"
         >
           Get tailored consulting packages that help you uncover hidden revenue, fix leaks, and
@@ -55,7 +62,7 @@ export default function Services() {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: 0.1, ease: easeOut as any }}
+          transition={{ duration: 0.45, delay: 0.1, ease: easeOut }}
           className="mt-6 flex justify-center relative z-0"
         >
           <div className="inline-flex items-center rounded-2xl border border-black/10 bg-gray-100 px-4 py-2 text-sm text-gray-800 shadow-sm">
@@ -109,7 +116,7 @@ export default function Services() {
               step="Step 2"
               Icon={ShieldCheck}
               title="The $30,000 Guarantee"
-              quote={`"If we don't find you $30,000 in Hidden Revenue we refund you immediately"`}
+              quote={'"If we don\'t find you $30,000 in Hidden Revenue we refund you immediately"'}
             />
           </ParallaxCard>
 
@@ -202,13 +209,6 @@ function ParallaxCard({ children }: { children: React.ReactNode }) {
     </motion.div>
   );
 }
-
-/* ---------- Easing + variants ---------- */
-const easeOut = [0.22, 1, 0.36, 1] as const;
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut as any } },
-};
 
 /* ---------- CTA with periodic attention pulse (reduced-motion safe) ---------- */
 function AttentionCTA({

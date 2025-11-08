@@ -11,11 +11,10 @@ import { ChartLine, Target, Rocket } from "lucide-react";
 import Reveal from "./Reveal";
 
 /* -------------------- Motion helpers -------------------- */
-const easeOut: number[] = [0.22, 1, 0.36, 1];
-const easeOutAny = easeOut as any;
+const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutAny } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOut } },
 };
 
 export default function About() {
@@ -213,13 +212,14 @@ function StepCard({
       {/* Floating Step Pill (tiny bob + shadow lift) */}
       <motion.div
         className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-[120px]"
-        initial={{ opacity: 0, y: -6 }}
+        style={{ opacity: 1 }}
+        initial={{ opacity: 1, y: 0 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.45, ease: easeOutAny }}
+        transition={{ duration: 0.45, ease: easeOut }}
       >
         <motion.div
-                className="rounded-full border bg-white text-[#0A1628] text-center font-medium text-base sm:text-lg md:text-[18px] leading-tight flex items-center justify-center shadow-sm"
+          className="rounded-full border bg-white text-[#0A1628] text-center font-medium text-base sm:text-lg md:text-[18px] leading-tight flex items-center justify-center shadow-sm"
           style={{ borderColor: borderHex, height: "48px" }}
           animate={{ y: [0, -2, 0], boxShadow: ["0 1px 2px rgba(0,0,0,.06)","0 6px 14px rgba(0,0,0,.10)","0 1px 2px rgba(0,0,0,.06)"] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -235,11 +235,11 @@ function StepCard({
           shadow-[0px_8px_20px_rgba(0,0,0,0.20)]
           p-4 sm:p-5 md:p-6 flex flex-col items-center text-center will-change-transform
         `}
-        style={{ border: `1px solid ${borderHex}`, minHeight: '320px' }}
-        initial={{ opacity: 0, y: 16 }}
+        style={{ border: `1px solid ${borderHex}`, minHeight: '320px', opacity: 1 }}
+        initial={{ opacity: 1, y: 0 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5, ease: easeOutAny }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.5, ease: easeOut }}
         whileHover={{
           boxShadow:
             "0 16px 36px -8px rgba(0,0,0,.22), 0 4px 10px rgba(0,0,0,.08)",

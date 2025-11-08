@@ -63,6 +63,7 @@ export default function Hero() {
     } else {
       v.pause();
       setIsPlaying(false);
+      setShowThumbnail(true);
     }
   };
 
@@ -283,8 +284,14 @@ export default function Hero() {
                       setIsPlaying(true);
                       setShowThumbnail(false);
                     }}
-                    onPause={() => setIsPlaying(false)}
-                    onEnded={() => setIsPlaying(false)}
+                    onPause={() => {
+                      setIsPlaying(false);
+                      setShowThumbnail(true);
+                    }}
+                    onEnded={() => {
+                      setIsPlaying(false);
+                      setShowThumbnail(true);
+                    }}
                     className="w-full h-auto block aspect-[4/3] md:aspect-video object-cover antialiased border-4 border-white"
                   >
                     <source src="/hero-video.mp4" type="video/mp4" />

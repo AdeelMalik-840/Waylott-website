@@ -83,7 +83,7 @@ export default function TestimonialCard({
           WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical',
         }}>
-          "{review}"
+          &quot;{review}&quot;
         </p>
 
         {/* Read More Link */}

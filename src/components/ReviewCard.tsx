@@ -1,5 +1,5 @@
 import React, { useId } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 
 export type Review = {
   id: string;
@@ -8,7 +8,7 @@ export type Review = {
   rating: number; // Can be 4.5 for half stars
   ratingHalf?: boolean;
   review: string;
-  imageUrl: string | any;
+  imageUrl: string | StaticImageData;
   linkHref?: string;
 };
 
@@ -112,7 +112,7 @@ export default function ReviewCard({
             />
           ) : (
             <Image
-              src={imageUrl.src || imageUrl}
+              src={imageUrl}
               alt={`${name} portrait`}
               fill
               className="object-cover rounded-lg"
@@ -176,7 +176,7 @@ export default function ReviewCard({
                 WebkitBoxOrient: "vertical",
               }}
             >
-              "{review}"
+              &quot;{review}&quot;
             </p>
           </blockquote>
 
@@ -212,7 +212,7 @@ export default function ReviewCard({
               />
             ) : (
               <Image
-                src={imageUrl.src || imageUrl}
+                src={imageUrl}
                 alt={`${name} portrait`}
                 fill
                 className="object-cover object-center rounded-lg"
@@ -277,7 +277,7 @@ export default function ReviewCard({
                 WebkitBoxOrient: "vertical",
               }}
             >
-              "{review}"
+              &quot;{review}&quot;
             </p>
           </blockquote>
 

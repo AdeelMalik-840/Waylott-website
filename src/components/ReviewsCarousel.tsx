@@ -18,12 +18,7 @@ export default function ReviewsCarousel({
   intervalMs = 4000,
   pauseOnHover = true,
 }: ReviewsCarouselProps) {
-  const N = reviews.length;
-  
-  if (!reviews || N < 3) {
-    return null;
-  }
-
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   // Two indices: active (business state) and vIndex (virtual track position)
   const [active, setActive] = useState(0); // Index in real list [0..N-1]
   const [vIndex, setVIndex] = useState(1); // Index in virtual list [1..N] (never 0 or N+1)
@@ -34,6 +29,18 @@ export default function ReviewsCarousel({
   const [mounted, setMounted] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const transitionEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Responsive dimensions
+  const [slideWidth, setSlideWidth] = useState(580);
+  const [slideHeight, setSlideHeight] = useState(200);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Calculate N early for use in hooks
+  const N = reviews?.length || 0;
   
   // Lock body scroll when modal is open
   useBodyLock(selectedReview !== null);
@@ -95,16 +102,6 @@ export default function ReviewsCarousel({
     return () => modal.removeEventListener('keydown', handleTab);
   }, [selectedReview]);
   
-  const trackRef = useRef<HTMLDivElement>(null);
-  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const transitionEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Responsive dimensions
-  const [slideWidth, setSlideWidth] = useState(580);
-  const [slideHeight, setSlideHeight] = useState(200);
-  const [isMobile, setIsMobile] = useState(false);
-  
   // Update dimensions on resize
   useEffect(() => {
     const updateDimensions = () => {
@@ -135,17 +132,6 @@ export default function ReviewsCarousel({
   // Simple gap between cards (no scaling, so no need for extra spacing)
   const BASE_GAP = isMobile ? 16 : 24; // Gap between cards
   const UNIT = SLIDE_WIDTH + BASE_GAP; // Unit distance per slide
-
-  // Virtual track: [clone(last), ...reviews, ...reviews, ...reviews, clone(first)]
-  // Extended with multiple cycles to support true infinite scrolling
-  const virtualTrack = [
-    reviews[N - 1], // clone of last (index 0)
-    ...reviews,     // first cycle (indices 1 to N)
-    ...reviews,     // second cycle (indices N+1 to 2N)
-    ...reviews,     // third cycle (indices 2N+1 to 3N)
-    ...reviews,     // fourth cycle (indices 3N+1 to 4N)
-    reviews[0],     // clone of first for seamless wrap (index 4N+1)
-  ];
 
   // Calculate translateX to center virtual index vIndex
   const getTranslateX = useCallback((virtualIdx: number) => {
@@ -178,6 +164,7 @@ export default function ReviewsCarousel({
 
   // Map virtual index to real index (supports infinite scrolling)
   const getRealIndex = useCallback((virtualIdx: number): number => {
+    if (N < 3) return 0; // Safety check
     if (virtualIdx === 0) return N - 1; // clone of last
     if (virtualIdx === 4 * N + 1) return 0; // clone of first
     // For all other indices, use modulo to map back to real reviews
@@ -188,6 +175,7 @@ export default function ReviewsCarousel({
 
   // Move to next slide (right to left) - infinite scrolling
   const next = useCallback(() => {
+    if (N < 3) return; // Safety check
     if (isTransitioning) return;
     
     setIsTransitioning(true);
@@ -251,6 +239,7 @@ export default function ReviewsCarousel({
 
   // Move to previous slide (left to right - reverse direction) - infinite scrolling
   const prev = useCallback(() => {
+    if (N < 3) return; // Safety check
     if (isTransitioning) return;
     
     setIsTransitioning(true);
@@ -304,6 +293,7 @@ export default function ReviewsCarousel({
 
   // Auto-scroll
   useEffect(() => {
+    if (N < 3 || !reviews) return; // Safety check
     if (isPaused || isTransitioning) {
       if (autoScrollTimerRef.current) {
         clearInterval(autoScrollTimerRef.current);
@@ -321,18 +311,20 @@ export default function ReviewsCarousel({
         clearInterval(autoScrollTimerRef.current);
       }
     };
-  }, [isPaused, isTransitioning, intervalMs, next]);
+  }, [isPaused, isTransitioning, intervalMs, next, N, reviews]);
 
   // Initial positioning
   useEffect(() => {
+    if (N < 3 || !reviews) return; // Safety check
     const initTimeout = setTimeout(() => {
       updateTransform(1);
     }, 400);
     return () => clearTimeout(initTimeout);
-  }, [updateTransform]);
+  }, [updateTransform, N, reviews]);
 
   // Handle window resize with debounce
   useEffect(() => {
+    if (N < 3 || !reviews) return; // Safety check
     const handleResize = () => {
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
@@ -349,10 +341,11 @@ export default function ReviewsCarousel({
         clearTimeout(resizeTimeoutRef.current);
       }
     };
-  }, [vIndex, updateTransform]);
+  }, [vIndex, updateTransform, N, reviews]);
 
   // Handle keyboard navigation
   useEffect(() => {
+    if (N < 3 || !reviews) return; // Safety check
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedReview && e.key === "Escape") {
         setSelectedReview(null);
@@ -367,7 +360,7 @@ export default function ReviewsCarousel({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [next, selectedReview]);
+  }, [next, selectedReview, N, reviews]);
 
   // Pause on hover, focus, or touch
   const handleMouseEnter = () => {
@@ -405,6 +398,22 @@ export default function ReviewsCarousel({
       }
     };
   }, []);
+
+  // Early return check AFTER all hooks
+  if (!reviews || N < 3) {
+    return null;
+  }
+
+  // Virtual track: [clone(last), ...reviews, ...reviews, ...reviews, clone(first)]
+  // Extended with multiple cycles to support true infinite scrolling
+  const virtualTrack = [
+    reviews[N - 1], // clone of last (index 0)
+    ...reviews,     // first cycle (indices 1 to N)
+    ...reviews,     // second cycle (indices N+1 to 2N)
+    ...reviews,     // third cycle (indices 2N+1 to 3N)
+    ...reviews,     // fourth cycle (indices 3N+1 to 4N)
+    reviews[0],     // clone of first for seamless wrap (index 4N+1)
+  ];
 
   // Simple viewport height - account for scaling on desktop
   const VERTICAL_PADDING = 20;
@@ -551,7 +560,6 @@ export default function ReviewsCarousel({
             const realIndex = getRealIndex(virtualIdx);
             // Allow active state for any virtual index that matches the current active real index
             const isActive = !isTransitioning && active === realIndex && virtualIdx === vIndex;
-            const isPreviousActive = previousActive !== null && previousActive === realIndex && !isActive;
             
             // Scaling effect for centered card on desktop
             // Only opacity changes for non-active cards on desktop
@@ -800,7 +808,7 @@ export default function ReviewsCarousel({
                         </div>
                         {/* Full Testimonial Text */}
                         <p id="review-modal-description" className="text-base text-gray-700 leading-relaxed">
-                          "{selectedReview.review}"
+                          &quot;{selectedReview.review}&quot;
                         </p>
                       </div>
                     </div>

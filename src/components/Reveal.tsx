@@ -1,78 +1,52 @@
 'use client'
 
-import { useEffect, useRef, useState, ReactNode } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ReactNode } from 'react'
 
 interface RevealProps {
   children: ReactNode
-  animation?: 'fade-up' | 'slide-left' | 'slide-right' | 'scale-up' | 'blur-up'
+  animation?: 'fade-up' | 'slide-in-left' | 'slide-in-right'
   delay?: number
   once?: boolean
-  threshold?: number
-  className?: string
 }
+
+const animationVariants = {
+  'fade-up': {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  },
+  'slide-in-left': {
+    hidden: { opacity: 0, x: -30 },
+    visible: { opacity: 1, x: 0 },
+  },
+  'slide-in-right': {
+    hidden: { opacity: 0, x: 30 },
+    visible: { opacity: 1, x: 0 },
+  },
+} as const
 
 export default function Reveal({
   children,
   animation = 'fade-up',
   delay = 0,
   once = true,
-  threshold = 0.1,
-  className = '',
 }: RevealProps) {
-  const [isVisible, setIsVisible] = useState(false)
-  const [hasAnimated, setHasAnimated] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const element = ref.current
-    if (!element) return
-
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion) {
-      setIsVisible(true)
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (delay > 0) {
-              setTimeout(() => {
-                setIsVisible(true)
-                if (once) setHasAnimated(true)
-              }, delay)
-            } else {
-              setIsVisible(true)
-              if (once) setHasAnimated(true)
-            }
-          } else if (!once && !hasAnimated) {
-            setIsVisible(false)
-          }
-        })
-      },
-      {
-        threshold,
-        rootMargin: '0px 0px -50px 0px',
-      }
-    )
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [delay, once, threshold, hasAnimated])
+  const reduce = useReducedMotion()
+  const variant = animationVariants[animation]
 
   return (
-    <div
-      ref={ref}
-      className={`reveal reveal-${animation} ${isVisible ? 'is-visible' : ''} ${className}`}
+    <motion.div
+      initial={reduce ? 'visible' : 'hidden'}
+      whileInView="visible"
+      viewport={{ once, amount: 0.35 }}
+      variants={variant}
+      transition={{
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        delay: reduce ? 0 : delay / 1000,
+      }}
     >
       {children}
-    </div>
+    </motion.div>
   )
 }
-
-
